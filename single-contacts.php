@@ -283,7 +283,7 @@ declare( strict_types=1 );
                             foreach ( $sections as $section ){
                                 ?>
                                 <section id="<?php echo esc_html( $section ) ?>" class="xlarge-6 large-12 medium-6 cell grid-item">
-                                    <div class="bordered-box">
+                                    <div class="bordered-box">fdsgsfd
                                         <?php
                                         do_action( "dt_details_additional_section", $section )
                                         ?>
