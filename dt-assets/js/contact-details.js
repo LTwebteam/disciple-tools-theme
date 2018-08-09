@@ -636,115 +636,12 @@ jQuery(document).ready(function($) {
         },
         onHideLayout: function() {
           $(`#${field_id}-result-container`).html("");
-          masonGrid.masonry('layout')
         },
         onReady: function() {
           if (field_id === "subassigned") {}
-        },
-        onShowLayout() {
-          masonGrid.masonry('layout')
         }
       }
     })
-  })
-
-  /**
-   * Tags
-   */
-  $.typeahead({
-    input: '.js-typeahead-tags',
-    minLength: 0,
-    maxItem: 20,
-    searchOnFocus: true,
-    template: function(query, item) {
-      return `<span>${_.escape(item.name)}</span>`
-    },
-    source: {
-      tags: {
-        display: ["name"],
-        ajax: {
-          url: contactsDetailsWpApiSettings.root + 'dt/v1/contact/multi-select-options',
-          data: {
-            s: "{{query}}",
-            field: "tags"
-          },
-          beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-WP-Nonce', wpApiShare.nonce);
-          },
-          callback: {
-            done: function(data) {
-              return (data || []).map(tag => {
-                return {
-                  name: tag
-                }
-              })
-            }
-          }
-        }
-      }
-    },
-    display: "name",
-    templateValue: "{{name}}",
-    dynamic: true,
-    multiselect: {
-      matchOn: ["name"],
-      data: function() {
-        return (contact.tags || []).map(t => {
-          return {
-            name: t
-          }
-        })
-      },
-      callback: {
-        onCancel: function(node, item) {
-          API.save_field_api('contact', contactId, {
-            'tags': {
-              values: [{
-                value: item.name,
-                delete: true
-              }]
-            }
-          })
-        }
-      }
-    },
-    callback: {
-      onClick: function(node, a, item, event) {
-        API.save_field_api('contact', contactId, {
-          tags: {
-            values: [{
-              value: item.name
-            }]
-          }
-        })
-      },
-      onResult: function(node, query, result, resultCount) {
-        let text = TYPEAHEADS.typeaheadHelpText(resultCount, query, result)
-        $('#tags-result-container').html(text);
-      },
-      onHideLayout: function() {
-        $('#tags-result-container').html("");
-        masonGrid.masonry('layout')
-      },
-      onShowLayout() {
-        masonGrid.masonry('layout')
-      }
-    }
-  });
-
-  $("#create-tag-return").on("click", function() {
-    let tag = $("#new-tag").val()
-    Typeahead['.js-typeahead-tags'].addMultiselectItemLayout({
-      name: tag
-    })
-    API.save_field_api('contact', contactId, {
-      tags: {
-        values: [{
-          value: tag
-        }]
-      }
-    })
-
   })
 
   /**
@@ -801,15 +698,6 @@ jQuery(document).ready(function($) {
         setStatus(contactResponse, true)
       }
     }).catch(handelAjaxError)
-  })
-  $('input.text-input').change(function() {
-    const id = $(this).attr('id')
-    const val = $(this).val()
-
-    API.save_field_api('contact', contactId, {
-        [id]: val
-      })
-      .catch(handelAjaxError)
   })
 
 
@@ -1076,7 +964,7 @@ jQuery(document).ready(function($) {
     editFieldsUpdate[key] = val
   })
 
-  $('#contact-details-edit').on('change', '.contact-input', function() {
+  $(document).on('change', '.contact-input', function() {
     let value = $(this).val()
     let field = $(this).data("type")
     let key = $(this).attr('id')
@@ -1115,7 +1003,6 @@ jQuery(document).ready(function($) {
     }
     $(this).parent().remove()
   }).on('change', '.text-input', function() {
-    console.log("test");
     let field = $(this).attr('id')
     editFieldsUpdate[field] = $(this).val()
   })
@@ -1153,14 +1040,8 @@ jQuery(document).ready(function($) {
         if (field.value) {
           allEmptyValues = false
         }
-        let link = _.escape(field.value);
-        if (contact_method == "contact_email") {
-          link = `<a href="mailto:${_.escape(field.value)}">${_.escape(field.value)}</a>`
-        } else if (contact_method == "contact_phone") {
-          link = `<a href="tel:${_.escape(field.value)}">${_.escape(field.value)}</a>`
-        }
         htmlField.append(`<li class="details-list ${_.escape(field.key)}">
-              ${link}
+            ${_.escape(field.value)}
               <img id="${_.escape(field.key)}-verified" class="details-status" ${!field.verified ? 'style="display:none"': ""} src="${contactsDetailsWpApiSettings.template_dir}/dt-assets/images/verified.svg"/>
               <img id="${_.escape(field.key)}-invalid" class="details-status" ${!field.invalid ? 'style="display:none"': ""} src="${contactsDetailsWpApiSettings.template_dir}/dt-assets/images/broken.svg"/>
             </li>
