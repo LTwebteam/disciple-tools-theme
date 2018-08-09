@@ -322,24 +322,8 @@ class Disciple_Tools_Contacts extends Disciple_Tools_Posts
 
     private static function is_key_contact_method_or_connection( $key ) {
         $channel_keys = [];
-        if (!isset(self::$channel_list))
-        {
-        self::$channel_list = Disciple_Tools_Contact_Post_Type::instance()->get_channels_list();
-      }
         foreach ( self::$channel_list as $channel_key => $channel_value ) {
             $channel_keys[] = "contact_" . $channel_key;
-        }
-        if (!isset( self::$contact_connection_types)){
-          self::$contact_connection_types = [
-              "locations",
-              "groups",
-              "people_groups",
-              "baptized_by",
-              "baptized",
-              "coached_by",
-              "coaching",
-              "subassigned"
-          ];
         }
         return in_array( $key, self::$contact_connection_types ) || in_array( $key, $channel_keys );
     }
@@ -418,9 +402,9 @@ class Disciple_Tools_Contacts extends Disciple_Tools_Posts
                 }
             }
             foreach ( $values as $field ){
-                  if ( isset( $field["delete"] ) && $field["delete"] == true){
+                if ( isset( $field["delete"] ) && $field["delete"] == true){
                     if ( !isset( $field["key"] )){
-                      return new WP_Error( __FUNCTION__, __( "missing key on:" ) . " " . $details_key );
+                        return new WP_Error( __FUNCTION__, __( "missing key on:" ) . " " . $details_key );
                     }
                     //delete field
                     $potential_error = self::delete_contact_field( $contact_id, $field["key"] );
@@ -437,7 +421,6 @@ class Disciple_Tools_Contacts extends Disciple_Tools_Posts
                 }
                 if ( isset( $potential_error ) && is_wp_error( $potential_error ) ) {
                     return $potential_error;
-
                 }
             }
         }
@@ -448,7 +431,7 @@ class Disciple_Tools_Contacts extends Disciple_Tools_Posts
 
     private static function parse_connections( $contact_id, $fields, $existing_contact){
         //update connections (groups, locations, etc)
-        foreach ( self::$contact_connection_types ?? [] as $connection_type ){
+        foreach ( self::$contact_connection_types as $connection_type ){
             if ( isset( $fields[$connection_type] ) ){
                 if ( !isset( $fields[$connection_type]["values"] )){
                     return new WP_Error( __FUNCTION__, __( "Missing values field on connection:" ) . " " . $connection_type, [ 'status' => 500 ] );
@@ -593,6 +576,7 @@ class Disciple_Tools_Contacts extends Disciple_Tools_Posts
         if ( is_wp_error( $potential_error )){
             return $potential_error;
         }
+
         $potential_error = self::parse_connections( $contact_id, $fields, $existing_contact );
         if ( is_wp_error( $potential_error )){
             return $potential_error;
@@ -639,7 +623,7 @@ class Disciple_Tools_Contacts extends Disciple_Tools_Posts
         }
 
         foreach ( $fields as $field_key => $value ){
-              if ( strpos( $field_key, "quick_button" ) !== false ){
+            if ( strpos( $field_key, "quick_button" ) !== false ){
                 self::handle_quick_action_button_event( $contact_id, [ $field_key => $value ] );
             }
         }
