@@ -175,6 +175,7 @@ $contact_fields = Disciple_Tools_Contacts::get_contact_fields();
                       var index = $(o).closest('div.merge-column').index();
                       $("#merge-form").find('input[type=checkbox]').each(function(key, el) {
                           var div = $(el).closest('div.merge-column').not('.hide');
+                          if(div.closest('.line-wrap').is('.hide')) { return true; }
                           if(div.index() === index) {
                               $(el).click();
                           }

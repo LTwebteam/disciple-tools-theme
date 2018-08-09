@@ -24,7 +24,6 @@ Template Name: View Duplicates
                     <table id='table-duplicates'>
                         <?php
                             foreach($duplicates as $ID => $duplicate) {
-                                if($duplicate['count'] <= 0) { continue; }
                                 echo "<form name='merge_$ID' method='POST' action='".site_url()."/contacts/$ID'></form><tr id='$ID'><td><a>{$duplicate['name']}</a></td><td><a>{$duplicate['count']} duplicates</a></td></tr>";
                             }
                         ?>
