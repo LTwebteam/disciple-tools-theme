@@ -6,3 +6,4 @@ node_modules/
 .DS_Store
 dt-people-groups/json/*
 composer.phar
+/nbproject/private/
